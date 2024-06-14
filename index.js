@@ -67,6 +67,32 @@ app.post('/api/persons', (request, response) => {
   });
 });
 
+app.put('/api/persons/:id', (request, response) => {
+  const { name, number } = request.body;
+
+  if (!name || !number) {
+    return response.status(400).json({
+      error: 'name or number missing'
+    });
+  }
+
+  Contact.findByIdAndUpdate(
+    request.params.id,
+    { name, number },
+    { new: true, runValidators: true, context: 'query' }
+  )
+    .then(updatedPerson => {
+      if (updatedPerson) {
+        response.json(updatedPerson);
+      } else {
+        response.status(404).send({ error: 'Person not found' });
+      }
+    })
+    .catch(error => {
+      response.status(400).send({ error: 'malformatted id' });
+    });
+});
+
 app.delete('/api/persons/:id', (request, response) => {
   const id = request.params.id;
 
