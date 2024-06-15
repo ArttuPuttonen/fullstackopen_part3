@@ -14,11 +14,19 @@ mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
 const contactSchema = new mongoose.Schema({
   name: {
     type: String,
+    minlength: 3,
     required: true
   },
   number: {
     type: String,
-    required: true
+    minlength: 8,
+    required: true,
+    validate: {
+        validator: function(value) {
+            return /^\d{2,3}-\d{5,8}$/.test(value);
+        },
+        message: 'Invalid phone number format. Please use the dash format, example: DD-DDDDDDD or DDD-DDDDDDD.'
+    }
   }
 });
 
